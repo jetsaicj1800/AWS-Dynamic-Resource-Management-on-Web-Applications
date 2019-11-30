@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1> Sign Up </h>
+	<form action="" method="post" novalidate>
+		{{ form.hidden_tag() }}
+			<font size="3">{{ form.username.label }}</font><br>
+			{{ form.username(size=32) }}<br>
+                	<font size="3">{{ form.password.label }}</font><br>
+                	{{ form.password(size=32) }}<br>
+                        <font size="3">{{ form.verify_password.label }}</font><br>
+                        {{ form.verify_password(size=32) }}<br>
+		{{ form.register() }} 
+	</form>
+{% endblock %}

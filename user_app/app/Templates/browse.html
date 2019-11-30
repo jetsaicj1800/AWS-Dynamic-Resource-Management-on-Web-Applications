@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1> Browse </h><br>
+	{% for i in filename_url %}
+		<br>	
+		<a href="{{url_for('display_images', filename=i[0])}}">
+		<img src="{{i[1]}}"> <br>
+		</a>
+
+	{% endfor %}
+{% endblock %}

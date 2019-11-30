@@ -1,0 +1,32 @@
+<html>
+	<head>
+		{% if title %}
+		<title>{{ title }} - Assignment 1</title>
+		{% else %}
+		<title>Assignment 1</title>
+		{% endif %}
+	</head>
+	<body>
+		<div>Pages:
+		{% if not session['username'] %}
+		<a href="{{ url_for('login') }}">Login</a>
+		<a href="{{ url_for('sign_up') }}">Sign Up</a>
+		{% else %}
+		<a href="{{ url_for('browse') }}">Browse</a>
+		<a href="{{ url_for('upload_file') }}">Upload</a>
+		<a href="{{ url_for('logout') }}">Logout</a>
+		{% endif %}
+		</div>
+		<hr>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				{% for message in messages %}
+					<div>
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+        	{% endwith %}
+		{% block content %}{% endblock %}
+	</body>
+</html>

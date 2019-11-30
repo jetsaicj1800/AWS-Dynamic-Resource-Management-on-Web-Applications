@@ -1,0 +1,19 @@
+
+add a new user:
+insert into pic_storage.users(username,password)
+values('jeff','haha');
+
+search for a user:
+select user_id from pic_storage.users where username = 'jeff'
+Note: if can't find---meaning it doesn't exisit
+
+Upload a new photo:
+insert into pic_storage.uploads (user_id, file_name,ori_path,text_path,thumb_path) 
+values('user_id' ,'hddaha','ffff','ssss','ssssss');
+
+view all photos under the same user:
+select * from pic_storage.uplods
+where user_id = xxxxx
+
+testing branch
+

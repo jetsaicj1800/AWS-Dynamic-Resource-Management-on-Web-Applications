@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+	<form action='{{url_for('browse')}}' method='get'>
+	<input type="submit" value="Go Back to Browse" />
+	</form>
+	 <style>
+	* {
+	  box-sizing: border-box;
+	}
+
+	.column {
+	  float: left;
+	  width: 50%;
+	  padding: 5px;
+	}
+
+	.row::after {
+	  content: "";
+	  clear: both;
+	  display: table;
+	}
+	</style>
+
+
+	<h> Display Original Photo + Photo with Text Detection </h><br>
+	<div class="row">
+  		<div class="column">
+   		 	<figure>
+				<img src="{{ ori_imgURL }}" style="width:100%">
+				<figcaption>Original Image</figcaption>
+			</figure>
+  		</div>
+ 		<div class="column">
+			<figure>
+    				<img src="{{ text_imgURL }}"  style="width:100%">
+				<figcaption>Image with Text Detection</figcaption>
+			</figure>
+  		</div>
+	</div>
+
+
+
+
+
+{% endblock %}

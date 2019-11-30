@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h3>Load Balancer DNS</h3>
+    <p><a href="http://{{ dns }}">{{ dns }}</a></p>
+
+
+    <table style="float: left;margin:4px">
+        <tr>
+            <td>
+                Worker Controls:
+            </td>
+
+            <td align="center">
+                <form action="{{url_for('ec2_create')}}" method="post">
+                    <input type="submit" value="Worker Pool +1"/>
+                </form>
+            </td>
+
+            <td align="center">
+                <form action="{{url_for('ec2_shrink')}}" method="post">
+                    <input type="submit" value="Worker Pool -1"/>
+                </form>
+            </td>
+
+            <td align="center">
+                <form action="{{url_for('ec2_termination')}}" method="post">
+                    <input type="submit" value="Terminate All Workers"/>
+                </form>
+             </td>
+        </tr>
+
+        <h3>Manager Controls</h3>
+        <tr>
+            <td>
+                Data Controls:
+            </td>
+
+            <td align="center">
+                 <form action="{{url_for('s3_delete')}}" method='post'>
+                    <input type='submit' value='Clear RDS and S3' />
+                 </form>
+            </td>
+
+
+
+        </tr>
+
+        <tr>
+            <td>
+                App Controls:
+            </td>
+
+            <td align="center">
+                 <form action="{{url_for('quit')}}" method='post'>
+                    <input type='submit' value='Stop Manager' />
+                 </form>
+            </td>
+
+        </tr>
+
+    </table>
+
+    <table style="float: left;margin:4px">
+
+        <form action="{{url_for('update_autoscaler')}}" method="post">
+        <tr>
+            <td align="center">
+            Autoscaler Controls
+            </td>
+        </tr>
+
+        <style>
+            label { display: inline-block; width: 150px; text-align: right; }
+        </style>
+
+        <tr >
+            <td align="right">
+                <label for="GrowThreshold">Growth Threshold:</label><input type="number" name="GrowThreshold"  id="GrowThreshold" min=0 max= 100 value="{{ auto_params[0] }}"><br>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right">
+                <label for="GrowFactor">Grow Factor:</label><input type="number" name="GrowFactor" id="GrowFactor" min=1 max= 10 value="{{ auto_params[2] }}"><br>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right">
+                <label for="ShrinkThreshold">Shrink Threshold:</label><input type="number" name="ShrinkThreshold" id="ShrinkThreshold" min=0 max= 100 value="{{ auto_params[1] }}"><br>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right">
+                <label for="ShrinkFactor">Shrink Factor:</label><input type="number" name="ShrinkFactor" id="ShrinkFactor" min=0 max= 10 value="{{ auto_params[3] }}"><br>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="right">
+                <input type="submit" value="Update Autoscaler" style="align:right">
+            </td>
+        </tr>
+        </form>
+
+    </table>
+
+    <div style="clear:both;"></div>
+
+    <h3 style="inline">Worker Info</h3>
+    <table>
+    {% for instance in instances %}
+        {% if instance.state['Name'] != 'terminated' %}
+        <tr>
+            <td><b>ID:</b> {{ instance.id }}</td>
+            <td><b>Type:</b> {{ instance.instance_type }}</td>
+            <td><b>State:</b> {{ instance.state['Name'] }}</td>
+
+            <td>
+                <form action="{{url_for('ec2_view',id=instance.id)}}" method='get'>
+                    <input type='submit' value='Details' />
+                </form>
+            </td>
+
+            <td>
+                <form action="{{url_for('ec2_start',id=instance.id)}}" method='post' >
+                    <input type='submit' value='start' />
+                </form>
+            </td>
+
+            <td>
+                <form action="{{url_for('ec2_stop',id=instance.id)}}" method='post' >
+                    <input type='submit' value='stop' />
+                </form>
+            </td>
+
+            <td>
+                <form action="{{url_for('ec2_destroy',id=instance.id)}}" method='post' onsubmit='return confirm("Are you sure?")'>
+                    <input type='submit' value='Destroy' />
+                </form>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                 <h4>Total CPU Usage</h4>
+
+                 <div id="cpu_plot{{ instance.id }}" style="width:300px;height:150px"></div>
+            </td>
+
+            <td>
+                <h4>Total HTTP Rate</h4>
+
+                <div id="http_rate_plot{{ instance.id }}" style="width:300px;height:150px"></div>
+            </td>
+
+
+                <script>
+
+                var options = {
+                    series: {
+                        lines: { show: true },
+                        points: { show: true }
+                    }
+                };
+
+
+                $.plot($("#cpu_plot{{ instance.id }}"), [ {{ cpu_stats[instance.id] }} ] , options);
+                $.plot($("#http_rate_plot{{ instance.id }}"), [ {{ http_rate_stats[instance.id] }} ] , options);
+
+                </script>
+
+        </tr>
+
+
+
+        {% endif %}
+    {% endfor %}
+    </table>
+
+
+{% endblock %}
